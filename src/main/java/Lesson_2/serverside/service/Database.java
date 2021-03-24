@@ -19,9 +19,6 @@ public class Database {
             statement = connection.createStatement();
             createUserTable();
             prepareAllStatement();
-//            createUser("a","a","a");
-//            createUser("s","s","s");
-//            createUser("d","d","d");
             return true;
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();

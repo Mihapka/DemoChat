@@ -81,6 +81,11 @@ public class ClientHandler {
                     myServer.sentMsgToClient(this, parts[1], parts[2]);
                     continue;
                 }
+                if (msgFromClient.startsWith("/cn")) {
+                    String[] parts2 = msgFromClient.trim().split(" ", 3);
+                    myServer.getdbAuthService().changeNickname(this.getName(),parts2[2].trim());
+                    continue;
+                }
                 if (msgFromClient.equals("/q")) {
                     sendMsg(msgFromClient);
                     return;
