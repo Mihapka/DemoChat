@@ -45,6 +45,11 @@ public class MyServer {
         }
     }
 
+    public void chatLog(){
+
+
+    }
+
     public synchronized void subscribe(ClientHandler c) {
         clientsList.add(c);
     }
