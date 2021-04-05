@@ -1,4 +1,6 @@
-package Lesson_8.clientside;
+package Lesson_2.clientside;
+
+import Lesson_2.serverside.service.ChatLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +12,9 @@ import java.net.Socket;
 public class EchoClient extends JFrame {
 
     private final String SERVER_ADDR = "localhost";
+    private final String FILE_NAME = "log.txt";
     private final int SERVER_PORT = 8181;
+
 
     private JTextField msgInputField;
     private JTextArea chatArea;
@@ -20,6 +24,9 @@ public class EchoClient extends JFrame {
     private DataOutputStream dos;
 
     private boolean isAuthorised;
+
+    public static String id;
+    public static String login;
 
     public boolean isAuthorised() {
         return isAuthorised;
@@ -59,10 +66,15 @@ public class EchoClient extends JFrame {
 
             try {
                 while (true) {
+
                     String serverMsg = dis.readUTF();
+                    String[] parts = serverMsg.split(" ");
                     if (serverMsg.startsWith("/authok")) {
                         setAuthorised(true);
-                        chatArea.append("Вы авторизовались" + "\n");
+                        chatArea.append("Вы авторизовались под ником: " + parts[3] + "\n");
+                        id = parts[1];
+                        login = parts[2];
+                        chatArea.append(ChatLog.lastMsgLoader(prepareLogFileName()));
                         break;
                     }
                     chatArea.append(serverMsg + "\n");
@@ -70,7 +82,7 @@ public class EchoClient extends JFrame {
                 while (true) {
                     String serverMsg = dis.readUTF();
                     if (serverMsg.equals("/q")) {
-                        break;
+                        closeConnection();
                     }
                     chatArea.append(serverMsg + "\n");
                 }
@@ -162,7 +174,14 @@ public class EchoClient extends JFrame {
         }
     }
 
+    public String prepareLogFileName() {
+
+        return id + login + FILE_NAME;
+    }
+
     public void closeConnection() {
+
+        ChatLog.lastMsgLoger(chatArea.getText(), prepareLogFileName());
 
         try {
             dos.flush();
@@ -180,4 +199,5 @@ public class EchoClient extends JFrame {
             e.printStackTrace();
         }
     }
+
 }

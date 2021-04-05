@@ -45,11 +45,6 @@ public class MyServer {
         }
     }
 
-    public void chatLog(){
-
-
-    }
-
     public synchronized void subscribe(ClientHandler c) {
         clientsList.add(c);
     }
@@ -63,7 +58,9 @@ public class MyServer {
         return clientsList.stream().anyMatch(a -> a.getName().equals(nick));
     }
 
+    /* сообщение в чат*/
     public synchronized void sentMsgToClient(String msg, String name) {
+
         for (ClientHandler c : clientsList) {
             if (!c.getName().equals(name)) {
                 c.sendMsg(name + ": " + msg);
@@ -74,12 +71,24 @@ public class MyServer {
         }
     }
 
+    /* лог чата*/
+    public synchronized void sentMsgToClient(String msgLog, String nameTo, String name) {
+
+        for (ClientHandler c : clientsList) {
+            if (c.getName().equals(nameTo)) {
+                c.sendMsg("Лог чата:" + "\n" + msgLog);
+                System.out.println("Лог чата " + name + ": " + msgLog);
+            }
+        }
+    }
+
+    /* сообщение в приватный чат*/
     public synchronized void sentMsgToClient(ClientHandler clientHandler, String nameTo, String msg) {
 
         for (ClientHandler c : clientsList) {
             if (c.getName().equalsIgnoreCase(nameTo)) {
-                c.sendMsg(clientHandler.getName() + ": приватное сообщение: " + msg);
-                clientHandler.sendMsg("Ты написал приватное сообщение " + nameTo + ": " + msg);
+                c.sendMsg(clientHandler.getName() + " прислал вам приватное сообщение: " + "\n" + msg);
+                clientHandler.sendMsg("Ты написал приватное сообщение для " + nameTo + ": " + "\n" + msg);
                 return;
             }
         }

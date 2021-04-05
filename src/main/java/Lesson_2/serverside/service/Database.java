@@ -8,6 +8,7 @@ public class Database {
     private static Statement statement;
     private static PreparedStatement createUserStatement;
     private static PreparedStatement getUserNicknameStatement;
+    private static PreparedStatement getUserIdStatement;
     private static PreparedStatement changeUserNicknameStatement;
     private static PreparedStatement deleteUserStatement;
 
@@ -56,6 +57,7 @@ public class Database {
     public static void prepareAllStatement() throws SQLException {
         createUserStatement = connection.prepareStatement("INSERT INTO user (login, password, nickname) VALUES (?, ?, ?);");
         getUserNicknameStatement = connection.prepareStatement("SELECT nickname FROM user WHERE login = ? AND password = ?;");
+        getUserIdStatement = connection.prepareStatement("SELECT id FROM user WHERE login = ? AND password = ?;");
         changeUserNicknameStatement = connection.prepareStatement("UPDATE user SET nickname = ? WHERE nickname = ?;");
         deleteUserStatement = connection.prepareStatement("DELETE FROM user WHERE login = ?;");
     }
@@ -80,12 +82,30 @@ public class Database {
             ResultSet rs = getUserNicknameStatement.executeQuery();
             if (rs.next()) {
                 nickname = rs.getString(1);
+                System.out.println("nickname: " + nickname);
             }
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return nickname;
+    }
+
+    public static String getUserId(String login, String password) {
+        String id = null;
+        try {
+            getUserIdStatement.setString(1, login);
+            getUserIdStatement.setString(2, password);
+            ResultSet rs = getUserIdStatement.executeQuery();
+            if (rs.next()) {
+                id = rs.getString(1);
+                System.out.println("User ID: " + id);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
     }
 
     public static boolean changeUserNickname(String currentNickname, String newNickname) {

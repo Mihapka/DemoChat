@@ -1,8 +1,8 @@
 package Lesson_2.serverside.service;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import Lesson_2.clientside.EchoClient;
+
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler {
@@ -13,6 +13,8 @@ public class ClientHandler {
     private DataOutputStream dos;
 
     private String name;
+    private String id;
+    private String logFileName;
 
     public ClientHandler(MyServer myServer, Socket socket) {
         try {
@@ -41,10 +43,11 @@ public class ClientHandler {
             String authStr = dis.readUTF();
             if (authStr.startsWith("/auth")) {
                 String[] parts = authStr.split("\\s");
+                id = myServer.getdbAuthService().getId(parts[1], parts[2]);
                 String nick = myServer.getdbAuthService().getNickname(parts[1], parts[2]);
                 if (!nick.isEmpty()) {
                     if (!myServer.isNickBusy(nick)) {
-                        sendMsg("/authok " + nick);
+                        sendMsg("/authok" + " " + id + " " + parts[1] + " " + nick);
                         name = nick;
                         myServer.sentMsgToClient(" зашел в чат", name);
                         myServer.subscribe(this);
@@ -83,7 +86,8 @@ public class ClientHandler {
                 }
                 if (msgFromClient.startsWith("/cn")) {
                     String[] parts2 = msgFromClient.trim().split(" ", 3);
-                    myServer.getdbAuthService().changeNickname(this.getName(),parts2[2].trim());
+                    myServer.getdbAuthService().changeNickname(this.getName(), parts2[2].trim());
+                    name = parts2[2];
                     continue;
                 }
                 if (msgFromClient.equals("/q")) {
@@ -94,10 +98,6 @@ public class ClientHandler {
             myServer.sentMsgToClient(msgFromClient, name);
             System.out.println("Сообщение от " + name + ": " + msgFromClient);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void closeConnection() {
@@ -118,6 +118,18 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getLogFileName() {
+        return logFileName;
     }
 
     @Override
