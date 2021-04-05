@@ -1,6 +1,6 @@
-package Lesson_2;
+package Chat;
 
-import Lesson_2.serverside.service.MyServer;
+import Chat.serverside.service.MyServer;
 
 public class ServerApp {
     public static void main(String[] args) {

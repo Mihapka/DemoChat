@@ -1,4 +1,4 @@
-package Lesson_2.serverside.service;
+package Chat.serverside.service;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

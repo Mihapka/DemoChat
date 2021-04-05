@@ -1,6 +1,6 @@
-package Lesson_2.serverside.service;
+package Chat.serverside.service;
 
-import Lesson_2.serverside.interfaces.AuthServic;
+import Chat.serverside.interfaces.AuthServic;
 
 import java.util.ArrayList;
 import java.util.List;

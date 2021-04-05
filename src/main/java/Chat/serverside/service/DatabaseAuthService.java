@@ -1,6 +1,6 @@
-package Lesson_2.serverside.service;
+package Chat.serverside.service;
 
-import Lesson_2.serverside.interfaces.DBAuthService;
+import Chat.serverside.interfaces.DBAuthService;
 
 public class DatabaseAuthService implements DBAuthService {
     @Override

@@ -1,6 +1,6 @@
-package Lesson_2.serverside.service;
+package Chat.serverside.service;
 
-import Lesson_2.serverside.interfaces.DBAuthService;
+import Chat.serverside.interfaces.DBAuthService;
 
 import java.io.IOException;
 import java.net.ServerSocket;

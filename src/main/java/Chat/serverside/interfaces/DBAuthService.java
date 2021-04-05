@@ -1,4 +1,4 @@
-package Lesson_2.serverside.interfaces;
+package Chat.serverside.interfaces;
 
 public interface DBAuthService {
 
