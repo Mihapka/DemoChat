@@ -1,22 +1,26 @@
 package Chat.serverside.service;
 
 import Chat.serverside.interfaces.DBAuthService;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MyServer {
 
     private final int PORT = 8181;
+
+    private static Logger log = Logger.getLogger(MyServer.class.getName());
 
     private List<ClientHandler> clientsList;
 
     private DBAuthService dbAuthService;
 
     public DBAuthService getdbAuthService() {
+
         return dbAuthService;
     }
 
@@ -25,6 +29,7 @@ public class MyServer {
         clientsList = new ArrayList<>();
 
         if (!Database.connect()) {
+            log.log(Level.INFO, "Unable to connect to database.");
             throw new RuntimeException("Невозможно подключиться к базе данных.");
         }
 
@@ -33,28 +38,25 @@ public class MyServer {
         try (ServerSocket server = new ServerSocket(PORT)) {
 
             while (true) {
-                System.out.println("Сервер ожидает подключения");
+                log.info("Server is waiting for a connection.");
                 Socket socket = server.accept();
-                System.out.println("Клиент подключился");
+                log.info("Client connected.");
                 new ClientHandler(this, socket);
             }
         } catch (IOException e) {
-            System.out.println("Ошибка в работе сервера");
+            log.log(Level.INFO, "Client not connected.", e);
         } finally {
             Database.disconnect();
         }
     }
 
-    public void chatLog(){
-
-
-    }
-
     public synchronized void subscribe(ClientHandler c) {
+
         clientsList.add(c);
     }
 
     public synchronized void unsubscribe(ClientHandler c) {
+
         clientsList.remove(c);
     }
 
@@ -64,6 +66,7 @@ public class MyServer {
     }
 
     public synchronized void sentMsgToClient(String msg, String name) {
+
         for (ClientHandler c : clientsList) {
             if (!c.getName().equals(name)) {
                 c.sendMsg(name + ": " + msg);

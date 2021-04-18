@@ -1,6 +1,8 @@
 package Chat.serverside.service;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Database {
 
@@ -10,36 +12,43 @@ public class Database {
     private static PreparedStatement getUserNicknameStatement;
     private static PreparedStatement changeUserNicknameStatement;
     private static PreparedStatement deleteUserStatement;
+    private static Logger log = Logger.getLogger(MyServer.class.getName());
 
     public static boolean connect() {
+
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:User.s2db");
-            System.out.println("База данных подключена.");
+            log.log(Level.INFO, "Database connected.");
             statement = connection.createStatement();
             createUserTable();
             prepareAllStatement();
             return true;
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            log.log(Level.INFO, "Database not connected.", e);
             return false;
         }
     }
 
     public static void disconnect() {
+
         try {
             statement.close();
         } catch (SQLException e) {
+            log.log(Level.INFO, "Statement is closed.", e);
             e.printStackTrace();
         }
         try {
             connection.close();
         } catch (SQLException e) {
+            log.log(Level.INFO, "connection is closed.", e);
             e.printStackTrace();
         }
     }
 
     public static void createUserTable() throws SQLException {
+
         statement.executeUpdate("CREATE TABLE IF NOT EXISTS user (" +
                 "    id       INTEGER      PRIMARY KEY AUTOINCREMENT" +
                 "                          NOT NULL" +
@@ -54,6 +63,7 @@ public class Database {
     }
 
     public static void prepareAllStatement() throws SQLException {
+
         createUserStatement = connection.prepareStatement("INSERT INTO user (login, password, nickname) VALUES (?, ?, ?);");
         getUserNicknameStatement = connection.prepareStatement("SELECT nickname FROM user WHERE login = ? AND password = ?;");
         changeUserNicknameStatement = connection.prepareStatement("UPDATE user SET nickname = ? WHERE nickname = ?;");
@@ -68,11 +78,13 @@ public class Database {
             createUserStatement.executeUpdate();
             return true;
         } catch (SQLException e) {
+            log.log(Level.INFO, "User not created.", e);
             return false;
         }
     }
 
     public static String getUserNickname(String login, String password) {
+
         String nickname = null;
         try {
             getUserNicknameStatement.setString(1, login);
@@ -83,6 +95,7 @@ public class Database {
             }
             rs.close();
         } catch (SQLException e) {
+            log.log(Level.INFO, "User nick name not received.", e);
             e.printStackTrace();
         }
         return nickname;
@@ -95,6 +108,7 @@ public class Database {
             changeUserNicknameStatement.executeUpdate();
             return true;
         } catch (SQLException e) {
+            log.log(Level.INFO, "User nick name not changed.", e);
             return false;
         }
     }
@@ -105,6 +119,7 @@ public class Database {
             deleteUserStatement.executeUpdate();
             return true;
         } catch (SQLException e) {
+            log.log(Level.INFO, "User not deleted.", e);
             return false;
         }
     }

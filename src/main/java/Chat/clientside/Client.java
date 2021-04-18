@@ -1,13 +1,18 @@
-package Lesson_8.clientside;
+package Chat.clientside;
 
+import Chat.serverside.service.MyServer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class EchoClient extends JFrame {
+public class Client extends JFrame {
+
+    private static Logger log = Logger.getLogger(MyServer.class.getName());
 
     private final String SERVER_ADDR = "localhost";
     private final int SERVER_PORT = 8181;
@@ -22,25 +27,29 @@ public class EchoClient extends JFrame {
     private boolean isAuthorised;
 
     public boolean isAuthorised() {
+
         return isAuthorised;
     }
 
-    public EchoClient() {
+    public Client() {
 
         try {
             starConnection();
         } catch (IOException e) {
+            log.log(Level.INFO, "starConnection metod failed.", e);
             e.printStackTrace();
         }
         prepareGUI();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(EchoClient::new);
+
+        SwingUtilities.invokeLater(Client::new);
 
     }
 
     public void setAuthorised(boolean authorised) {
+
         isAuthorised = authorised;
     }
 
@@ -63,6 +72,7 @@ public class EchoClient extends JFrame {
                     if (serverMsg.startsWith("/authok")) {
                         setAuthorised(true);
                         chatArea.append("Вы авторизовались" + "\n");
+                        log.log(Level.INFO, "User logged in.");
                         break;
                     }
                     chatArea.append(serverMsg + "\n");
@@ -75,6 +85,7 @@ public class EchoClient extends JFrame {
                     chatArea.append(serverMsg + "\n");
                 }
             } catch (IOException e) {
+                log.log(Level.INFO, "openConnection metod failed.", e);
                 e.printStackTrace();
             }
             closeConnection();
@@ -93,6 +104,7 @@ public class EchoClient extends JFrame {
                             + "Закройте окно.");
                 }
             } catch (InterruptedException e) {
+                log.log(Level.INFO, "checkConnectionThread thread failed.", e);
                 e.printStackTrace();
             }
         });
@@ -140,6 +152,7 @@ public class EchoClient extends JFrame {
             }
         });
         setVisible(true);
+        log.log(Level.INFO, "prepareGUI method completed");
     }
 
     public void sendMsgToServer() {
@@ -155,8 +168,9 @@ public class EchoClient extends JFrame {
                 msgInputField.setText("");
                 msgInputField.grabFocus();
             } catch (IOException e) {
+                log.log(Level.INFO, "Error sending message", e);
+                JOptionPane.showMessageDialog(null, "Error sending message");
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Ошибка отправки сообщения");
                 msgInputField.setText("");
             }
         }
@@ -167,16 +181,19 @@ public class EchoClient extends JFrame {
         try {
             dos.flush();
         } catch (IOException e) {
+            log.log(Level.INFO, "DataInputStream close.", e);
             e.printStackTrace();
         }
         try {
             dis.close();
         } catch (IOException e) {
+            log.log(Level.INFO, "DataOutputStream close.", e);
             e.printStackTrace();
         }
         try {
             dos.close();
         } catch (IOException e) {
+            log.log(Level.INFO, "Socket close.", e);
             e.printStackTrace();
         }
     }

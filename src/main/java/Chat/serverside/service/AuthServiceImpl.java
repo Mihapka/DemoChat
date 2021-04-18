@@ -1,7 +1,6 @@
 package Chat.serverside.service;
 
 import Chat.serverside.interfaces.AuthServic;
-
 import java.util.ArrayList;
 import java.util.List;
 

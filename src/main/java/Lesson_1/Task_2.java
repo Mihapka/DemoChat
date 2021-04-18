@@ -1,7 +1,7 @@
 package Lesson_1;
 
 /*
-2. Написать метод, который преобразует массив в ArrayList;
+        2. Написать метод, который преобразует массив в ArrayList;
 */
 
 import java.util.ArrayList;
